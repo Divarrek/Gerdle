@@ -111,6 +111,31 @@
                 border-color : transparent;
                 background-color : darkgray;
             }
+
+            .present {
+                color : white;
+                border-color : transparent;
+                background-color : orange;
+            }
+
+            .game-tile.flipped {
+                transform: rotateX(180deg) scaleY(-1);
+                transform-style: preserve-3d;
+	            transition: 0.5s;
+                animation-timing-function: ease-in;
+            }
+            .game-tile.flipped:nth-child(2) {
+	            transition-delay: 0.2s;
+            }
+            .game-tile.flipped:nth-child(3) {
+	            transition-delay: 0.4s;
+            }
+            .game-tile.flipped:nth-child(4) {
+	            transition-delay: 0.6s;
+            }
+            .game-tile.flipped:nth-child(5) {
+	            transition-delay: 0.8s;
+            }
             
             .key.correct {
                 background-color : darkgreen;
@@ -121,12 +146,6 @@
             }
 
             .key.present {
-                background-color : orange;
-            }
-
-            .present {
-                color : white;
-                border-color : transparent;
                 background-color : orange;
             }
 
@@ -574,7 +593,7 @@
 
                     result += '' + (guesses + 1) + '\/ 6 \n';
                     for (let i = 0; i < guess.length; i++) {
-                        document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("correct");
+                        document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("correct", "flipped");
                     }
 
                     for (let i = 0; i <= guesses; i++) {
@@ -602,14 +621,14 @@
                     if (checkDict.indexOf(encodeWord(theGuess)) != -1) {
                         for (let i = 0; i < guess.length; i++) {
                             if (guess[i] == word[i]) {
-                                document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("correct");
+                                document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("correct", "flipped");
                                 $('.key[data-key="' + guess[i] + '"]').addClass("correct");
                                 $('.key[data-key="' + guess[i] + '"]').removeClass("present");
                             } else if (word.indexOf(guess[i]) != -1) {
-                                document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("present");
+                                document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("present", "flipped");
                                 $('.key[data-key="' + guess[i] + '"]').addClass("present");
                             } else {
-                                document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("incorrect");
+                                document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("incorrect", "flipped");
                                  $('.key[data-key="' + guess[i] + '"]').addClass("incorrect");
                             }
                         }
