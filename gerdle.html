@@ -91,7 +91,7 @@
                 background-color : darkgray;
                 text-align : center;
                 font-weight : 600;
-                padding : .5em 1em;
+                padding : .5em .9em;
                 cursor : pointer;
             }
 
@@ -110,6 +110,18 @@
                 color : white;
                 border-color : transparent;
                 background-color : darkgray;
+            }
+            
+            .key.correct {
+                background-color : darkgreen;
+            }
+
+            .key.incorrect {
+                background-color : gray;
+            }
+
+            .key.present {
+                background-color : orange;
             }
 
             .present {
@@ -554,10 +566,14 @@
                         for (i = 0; i < guess.length; i++) {
                             if (guess[i] == word[i]) {
                                 document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("correct");
+                                $('.key[data-key="' + guess[i] + '"]').addClass("correct");
+                                $('.key[data-key="' + guess[i] + '"]').removeClass("present");
                             } else if (word.indexOf(guess[i]) != -1) {
                                 document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("present");
+                                $('.key[data-key="' + guess[i] + '"]').addClass("present");
                             } else {
                                 document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("incorrect");
+                                $('.key[data-key="' + guess[i] + '"]').addClass("incorrect");
                             }
                         }
 
