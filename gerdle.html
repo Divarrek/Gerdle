@@ -298,7 +298,11 @@
             <div class="modal" id="modal-result">
                 <a href="#" class="close-modal">serriñ</a>
                 <p>Deuet eo ganeoc'h !</p>
-                <a href="#" class="copy-result">Rannañ an disoc'h!</a>
+                <a href="https://twitter.com/share" class="twitter-share-button" data-url="" data-text="Gerdle niv. XX
+⬛⬛🟨🟨⬛
+⬛⬛🟨🟨⬛
+⬛⬛🟨🟨⬛
+⬛⬛🟨🟨⬛">Tweet</a>
             </div>
             <div id="overlay"></div>
 
@@ -548,8 +552,9 @@
             var getTheWord = function () {
                 let curDate = new Date();
                 let dateDiff = curDate - startDate;
-                let theWord = dict[(Math.floor(dateDiff / (3600 * 1000 * 24)))].split("");
-                for (i = 0; i < theWord.length; i++) {
+                let wordId = (Math.floor(dateDiff / (3600 * 1000 * 24)));
+                let theWord = dict[wordId].split("");
+                for (let i = 0; i < theWord.length; i++) {
                     if (theWord[i] == "q") {
                         theWord[i] = "ch";
                     }else if (theWord[i] == "x") {
@@ -557,6 +562,7 @@
                     }
                 }
 
+                result = "Gerdle - Brezhoneg\nniv. " + (wordId + 1) + "\n";
                 word = theWord;
             };
 
@@ -564,28 +570,45 @@
                 let theGuess = guess.join("");
                 if (theGuess == word.join("")) {
                     won = true;
-                    result += '\n';
-                    for (i = 0; i < guess.length; i++) {
+
+                    result += '' + (guesses + 1) + '\/ 6 \n';
+                    for (let i = 0; i < guess.length; i++) {
                         document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("correct");
-                        result += '🟩';
                     }
+
+                    for (let i = 0; i <= guesses; i++) {
+                        let line = '';
+                        for (let j = 0; j < document.querySelectorAll("#board .game-row")[i].querySelectorAll(".game-tile").length; j++) {
+                            if (document.querySelectorAll("#board .game-row")[i].querySelectorAll(".game-tile")[j].classList.contains('correct')) {
+                                line += '🟩';
+                            } else if (document.querySelectorAll("#board .game-row")[i].querySelectorAll(".game-tile")[j].classList.contains('present')) {
+                                line += '🟨';
+                            } else if (document.querySelectorAll("#board .game-row")[i].querySelectorAll(".game-tile")[j].classList.contains('incorrect')) {
+                                line += '⬛';
+                            }
+                        }
+                        result += line + '\n';
+                    }
+                    document.querySelector(".twitter-share-button").setAttribute("data-text", result);
+
+                    let s = document.createElement("script");
+                    s.type = "text/javascript";
+                    s.src = "share.js";
+                    $("body").append(s);
+                    
                     $("#modal-result, #overlay").show();
                 } else if (guesses <= 6) {
                     if (checkDict.indexOf(encodeWord(theGuess)) != -1) {
-                        result += '\n';
-                        for (i = 0; i < guess.length; i++) {
+                        for (let i = 0; i < guess.length; i++) {
                             if (guess[i] == word[i]) {
                                 document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("correct");
                                 $('.key[data-key="' + guess[i] + '"]').addClass("correct");
                                 $('.key[data-key="' + guess[i] + '"]').removeClass("present");
-                                result += '🟩';
                             } else if (word.indexOf(guess[i]) != -1) {
                                 document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("present");
                                 $('.key[data-key="' + guess[i] + '"]').addClass("present");
-                                result += '🟨';
                             } else {
                                 document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("incorrect");
-                                result += '⬛';
                                  $('.key[data-key="' + guess[i] + '"]').addClass("incorrect");
                             }
                         }
@@ -597,7 +620,7 @@
                     } else {
                         $('#error').removeClass('hidden');
                         setTimeout(() => ($('#error').addClass('hidden')), 1000);
-                        for (i = 0; i < guess.length; i++) {
+                        for (let i = 0; i < guess.length; i++) {
                             document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].textContent = "";
                         }
                         guess = [];
