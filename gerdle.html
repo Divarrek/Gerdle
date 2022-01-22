@@ -61,7 +61,7 @@
                 color : white;
                 text-decoration : none;
             }
-            #modal {
+            .modal {
                 display : none;
                 position : fixed;
                 top : 0;
@@ -155,7 +155,7 @@
                 float : right;
             }
 
-            #modal .toggle-modal {
+            .modal .close-modal {
                 display: block;
                 text-align : right;
             }
@@ -182,7 +182,7 @@
     <body>
         <div id="game-wrapper">
             <header id="header">
-                <a id="open-modal" class="toggle-modal" href="#">reolennoù</a>
+                <a id="open-modal" class="open-modal-help" href="#">reolennoù</a>
                 <h1>GERDLE</h1>
             </header>
             <div id="error" class="hidden">
@@ -234,8 +234,8 @@
                 </div>
             </div>
 
-            <div id="modal">
-                <a href="#" class="toggle-modal">serriñ</a>
+            <div class="modal" id="modal-help">
+                <a href="#" class="close-modal">serriñ</a>
                 <p>Ar c'hoari-mañ zo bet savet diwar ar c'hoari <a href="https://www.powerlanguage.co.uk/wordle/" target="_blank">Wordle</a></p>
                 <h2>Penaos c'hoari?</h2>
 
@@ -294,6 +294,11 @@
                         <p>C'H ha CH a gont evit ul lizherenn hepken.</p>
                     </div>
                 </div>
+            </div>
+            <div class="modal" id="modal-result">
+                <a href="#" class="close-modal">serriñ</a>
+                <p>Deuet eo ganeoc'h !</p>
+                <a href="#" class="copy-result">Rannañ an disoc'h!</a>
             </div>
             <div id="overlay"></div>
 
@@ -531,6 +536,7 @@
             var guesses = 0;
             var curTile = 0;
             var won = false;
+            var result = '';
 
             var sendLetter = function (letter) {
                 if (won) return;
@@ -558,22 +564,29 @@
                 let theGuess = guess.join("");
                 if (theGuess == word.join("")) {
                     won = true;
+                    result += '\n';
                     for (i = 0; i < guess.length; i++) {
                         document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("correct");
+                        result += '🟩';
                     }
+                    $("#modal-result, #overlay").show();
                 } else if (guesses <= 6) {
                     if (checkDict.indexOf(encodeWord(theGuess)) != -1) {
+                        result += '\n';
                         for (i = 0; i < guess.length; i++) {
                             if (guess[i] == word[i]) {
                                 document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("correct");
                                 $('.key[data-key="' + guess[i] + '"]').addClass("correct");
                                 $('.key[data-key="' + guess[i] + '"]').removeClass("present");
+                                result += '🟩';
                             } else if (word.indexOf(guess[i]) != -1) {
                                 document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("present");
                                 $('.key[data-key="' + guess[i] + '"]').addClass("present");
+                                result += '🟨';
                             } else {
                                 document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("incorrect");
-                                $('.key[data-key="' + guess[i] + '"]').addClass("incorrect");
+                                result += '⬛';
+                                 $('.key[data-key="' + guess[i] + '"]').addClass("incorrect");
                             }
                         }
 
@@ -626,10 +639,22 @@
                     }
                 });
 
-                $("#overlay, .toggle-modal").on("click", function(e) {
+                $(".open-modal-help").on("click", function(e) {
                     e.preventDefault();
 
-                    $("#modal, #overlay").toggle();
+                    $("#modal-help, #overlay").show();
+                });
+                $("#overlay, .close-modal").on("click", function(e) {
+                    e.preventDefault();
+
+                    $(".modal, #overlay").hide();
+                });
+
+                $('.copy-result').on('click', function(e) {
+                    e.preventDefault();
+
+                    var text = 'Gerdle \n'+result;
+                    navigator.clipboard.writeText(text);
                 });
 
                 $(".key").on("click", function() {
