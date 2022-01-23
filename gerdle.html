@@ -542,6 +542,7 @@
             var curTile = 0;
             var won = false;
             var result = '';
+            var grid = [];
 
             var sendLetter = function (letter) {
                 if (won) return;
@@ -633,7 +634,8 @@
                     return;
                 }
 
-                
+                grid.push(guess.slice(0));
+                save();
                 guess = [];
                 guesses++;
                 curTile = 0;
@@ -677,9 +679,7 @@
 
                 $('.copy-result').on('click', function(e) {
                     e.preventDefault();
-
-                    var text = 'Gerdle \n'+result;
-                    navigator.clipboard.writeText(text);
+                    navigator.clipboard.writeText(result);
                 });
 
                 $(".key").on("click", function() {
@@ -750,7 +750,38 @@
                         }
                     }
                 });
+                load();
             });
+
+            var save = function() {
+                var today = new Date();
+                today.setHours(0);
+                today.setMinutes(0);
+                today.setSeconds(0);
+                today.setMilliseconds(0);
+                window.localStorage.setItem('grid', JSON.stringify(grid));
+                window.localStorage.setItem('valable', today.getTime());
+            }
+
+            var load = function() {
+                if(window.localStorage.getItem('grid') !== null &&window.localStorage.getItem('valable') !== null) {
+                    var valable = new Date(parseInt(window.localStorage.getItem('valable')));
+                    var today = new Date();
+                    today.setHours(0);
+                    today.setMinutes(0);
+                    today.setSeconds(0);
+                    today.setMilliseconds(0);
+                    if(valable.getTime() === today.getTime()) {
+                        var grid = JSON.parse(window.localStorage.getItem('grid'));
+                        for(row in grid) {
+                            for(cell in grid[row]) {
+                                sendLetter(grid[row][cell]);
+                            }
+                            checkGuess();
+                        }
+                    }
+                }
+            }
         </script>
     </body>
 </html>
