@@ -38,7 +38,6 @@ var getTheWord = function () {
 };
 
 var checkGuess = function () {
-    
     let theGuess = guess.join("");
     if (theGuess == word.join("")) {
         won = true;
@@ -47,30 +46,6 @@ var checkGuess = function () {
         for (let i = 0; i < guess.length; i++) {
             document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("correct", "flipped");
         }
-
-        for (let i = 0; i <= guesses; i++) {
-            let line = '';
-            for (let j = 0; j < document.querySelectorAll("#board .game-row")[i].querySelectorAll(".game-tile").length; j++) {
-                if (document.querySelectorAll("#board .game-row")[i].querySelectorAll(".game-tile")[j].classList.contains('correct')) {
-                    line += '🟩';
-                } else if (document.querySelectorAll("#board .game-row")[i].querySelectorAll(".game-tile")[j].classList.contains('present')) {
-                    line += '🟨';
-                } else if (document.querySelectorAll("#board .game-row")[i].querySelectorAll(".game-tile")[j].classList.contains('incorrect')) {
-                    line += '⬛';
-                }
-            }
-            result += line + '\n';
-        }
-        result += '#bzhg';
-
-        document.querySelector(".twitter-share-button").setAttribute("data-text", result);
-
-        let s = document.createElement("script");
-        s.type = "text/javascript";
-        s.src = "share.js";
-        $("body").append(s);
-        
-        $("#modal-result, #overlay").show();
     } else if (guesses <= 6) {
         if (checkDict.indexOf(encodeWord(theGuess)) != -1) {
             let sortedGuess = sortLetters(guess);
@@ -121,6 +96,38 @@ var checkGuess = function () {
         }
     } else {
         return;
+    }
+
+    if (guesses >= 5 || won) {
+        if (won) {
+            $("#modal-result p").text("Deuet eo ganeoc'h!");
+        } else {
+            $("#modal-result p").text("Klaskit en-dro warc'hoazh!");
+        }
+
+        for (let i = 0; i <= guesses; i++) {
+            let line = '';
+            for (let j = 0; j < document.querySelectorAll("#board .game-row")[i].querySelectorAll(".game-tile").length; j++) {
+                if (document.querySelectorAll("#board .game-row")[i].querySelectorAll(".game-tile")[j].classList.contains('correct')) {
+                    line += '🟩';
+                } else if (document.querySelectorAll("#board .game-row")[i].querySelectorAll(".game-tile")[j].classList.contains('present')) {
+                    line += '🟨';
+                } else if (document.querySelectorAll("#board .game-row")[i].querySelectorAll(".game-tile")[j].classList.contains('incorrect')) {
+                    line += '⬛';
+                }
+            }
+            result += line + '\n';
+        }
+        result += '#bzhg';
+
+        document.querySelector(".twitter-share-button").setAttribute("data-text", result);
+
+        let s = document.createElement("script");
+        s.type = "text/javascript";
+        s.src = "share.js";
+        $("body").append(s);
+        
+        $("#modal-result, #overlay").show();
     }
 
     grid.push(guess.slice(0));
