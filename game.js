@@ -42,7 +42,6 @@ var checkGuess = function () {
     if (theGuess == word.join("")) {
         won = true;
 
-        result += '' + (guesses + 1) + '\/ 6 \n';
         for (let i = 0; i < guess.length; i++) {
             document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("correct", "flipped");
         }
@@ -100,8 +99,10 @@ var checkGuess = function () {
 
     if (guesses >= 5 || won) {
         if (won) {
+            result += '' + (guesses + 1) + '\/ 6 \n';
             $("#modal-result p").text("Deuet eo ganeoc'h!");
         } else {
+            result += 'X\/ 6 \n';
             $("#modal-result p").text("Klaskit en-dro warc'hoazh!");
         }
 
