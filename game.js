@@ -4,6 +4,7 @@ var startDate = new Date(2022, 0, 21, 0, 0, 0);
 var lastKey = false;
 
 var word = [];
+var sortedWord = [];
 var guess = [];
 var guesses = 0;
 var curTile = 0;
@@ -33,9 +34,11 @@ var getTheWord = function () {
 
     result = "Gerdle - Brezhoneg\nniv. " + (wordId + 1) + "\n";
     word = theWord;
+    sortedWord = sortLetters(word);
 };
 
 var checkGuess = function () {
+    
     let theGuess = guess.join("");
     if (theGuess == word.join("")) {
         won = true;
@@ -70,18 +73,35 @@ var checkGuess = function () {
         $("#modal-result, #overlay").show();
     } else if (guesses <= 6) {
         if (checkDict.indexOf(encodeWord(theGuess)) != -1) {
+            let sortedGuess = sortLetters(guess);
+
             for (let i = 0; i < guess.length; i++) {
                 if (guess[i] == word[i]) {
                     document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("correct", "flipped");
                     $('.key[data-key="' + guess[i] + '"]').addClass("correct");
                     $('.key[data-key="' + guess[i] + '"]').removeClass("present");
-                } else if (word.indexOf(guess[i]) != -1) {
-                    document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("present", "flipped");
-                    $('.key[data-key="' + guess[i] + '"]').addClass("present");
                 } else {
-                    document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("incorrect", "flipped");
+                    if (word.indexOf(guess[i]) != -1) {
+                        if (sortedWord[guess[i]].length >= sortedGuess[guess[i]].length) {
+                            document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("present", "flipped");
+                            $('.key[data-key="' + guess[i] + '"]').addClass("present");
+                        } else {
+                            let intersect = sortedWord[guess[i]].filter(value => sortedGuess[guess[i]].includes(value));
+                            for (let j = 0; j < sortedWord[guess[i]].length; j++) {
+                                if (i == sortedGuess[guess[i]][j] && j < sortedWord[guess[i]].length - intersect.length) {
+                                    document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("present", "flipped");
+                                    $('.key[data-key="' + guess[i] + '"]').addClass("present");        
+                                } else {
+                                    document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("incorrect", "flipped");
+                                    $('.key[data-key="' + guess[i] + '"]').addClass("incorrect");
+                                }
+                            }
+                        }
+                    } else {
+                        document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[i].classList.add("incorrect", "flipped");
                         $('.key[data-key="' + guess[i] + '"]').addClass("incorrect");
-                }
+                    }
+                } 
             }
 
             if (guesses == 5) {
@@ -121,6 +141,18 @@ var backspace = function () {
     document.querySelectorAll("#board .game-row")[guesses].querySelectorAll(".game-tile")[curTile - 1].textContent = "";
     guess.pop();
     curTile--;
+};
+
+var sortLetters = function (word) {
+    let theWord = [];
+    for (let i = 0; i < word.length; i++) {
+        if (typeof theWord[word[i]] === 'undefined') {
+            theWord[word[i]] = [];
+        }
+
+        theWord[word[i]].push(i);
+    }
+    return theWord;
 };
 
 $(function() {
